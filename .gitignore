@@ -8,3 +8,7 @@ Thumbs.db
 .idea/
 .vscode/
 schema.sql
+
+# Go build output
+dokictl
+/dokictl

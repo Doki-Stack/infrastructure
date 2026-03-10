@@ -24,7 +24,8 @@ infrastructure/
 │   ├── qdrant/               # Qdrant Helm chart ref
 │   ├── dragonfly/            # Dragonfly Helm chart ref
 │   ├── rabbitmq/             # RabbitMQ
-│   ├── ollama/               # Ollama endpoint
+│   ├── ollama/               # Ollama (local/external modes)
+│   ├── vllm/                # vLLM production LLM
 │   ├── monitoring/          # Observability
 │   └── ee/                   # Enterprise Edition services
 ├── overlays/                 # Environment overlays (dev, staging, prod)
@@ -33,17 +34,22 @@ infrastructure/
 ├── kong/                     # Kong routes and plugin configs
 ├── policies/                 # Kyverno, Cilium, Falco rules
 ├── cluster/                  # kind config, namespaces
-├── scripts/                 # Setup and health check scripts
-├── tests/                    # Validation and smoke tests
+├── cmd/dokictl/              # CLI entry point
+├── internal/                 # CLI internal packages
 └── docs/                     # Implementation plan
 ```
 
 ## Quick Start
 
 ```bash
-kind create cluster --name doki-stack --config cluster/kind-config.yaml
-./scripts/setup-cluster.sh
-./scripts/health-check.sh
+# Build the CLI
+make build
+
+# Interactive setup wizard
+./dokictl setup
+
+# Or install everything with defaults
+./dokictl setup --all
 ```
 
 ## Namespace Layout
@@ -57,7 +63,7 @@ kind create cluster --name doki-stack --config cluster/kind-config.yaml
 | doki-platform | api-server, platform-ui                                                 |
 | doki-ee       | ee-license-server, ee-multi-tenancy, ee-notifications, ee-compliance, ee-governance, ee-dashboards |
 | doki-monitoring | Prometheus, Grafana, Loki, Tempo                                      |
-| ai            | Ollama service/endpoints                                                 |
+| doki-ai       | Ollama, vLLM                                                             |
 
 ## Helm Charts
 
@@ -80,11 +86,16 @@ kind create cluster --name doki-stack --config cluster/kind-config.yaml
 
 **EE (Enterprise Edition):** mcp-memory, mcp-registry, ee-license-server, agent-discovery, agent-rollback, ee-multi-tenancy, ee-notifications, ee-compliance, ee-governance, ee-dashboards
 
-## Testing
+## CLI Commands
 
 ```bash
-./tests/validate-infra.sh   # Run after cluster is up and health-check passes
-./tests/smoke-test.sh       # Run after Argo CD sync
+dokictl setup              # Interactive setup wizard
+dokictl setup --all        # Non-interactive, install everything
+dokictl teardown           # Delete the kind cluster (with confirmation)
+dokictl teardown --force   # Delete without confirmation
+dokictl health             # Health check all services
+dokictl test smoke         # Smoke tests (deployments, services, PVCs, routes)
+dokictl test validate      # Validation tests (DNS, connectivity, data service CRUD)
 ```
 
 Pre-commit: `pre-commit install && pre-commit run --all-files`
