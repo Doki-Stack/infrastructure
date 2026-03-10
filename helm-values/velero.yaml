@@ -1,0 +1,65 @@
+# Velero — Kubernetes backup to MinIO
+# Helm: helm repo add vmware-tanzu https://vmware-tanzu.github.io/helm-charts
+#       helm install velero vmware-tanzu/velero -n doki-system -f helm-values/velero.yaml
+#
+# Prerequisites:
+# 1. Create MinIO bucket: velero-backups (mc mb minio/velero-backups)
+# 2. Create velero-credentials secret with cloud credentials (see 09-disaster-recovery.md)
+
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.11.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+  limits:
+    memory: 512Mi
+    cpu: 500m
+
+configuration:
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: velero-backups
+      default: true
+      config:
+        region: minio
+        s3Url: http://minio.doki-data.svc.cluster.local:9000
+        s3ForcePathStyle: "true"
+        insecureSkipTLSVerify: "true"
+      credential:
+        name: velero-credentials
+        key: cloud
+
+  # kind does not support CSI snapshots; use filesystem backup via node-agent
+  volumeSnapshotLocation: []
+  snapshotsEnabled: false
+
+  # Use filesystem backup for PVCs (restic/kopia)
+  defaultVolumesToFsBackup: true
+
+  # Server settings
+  defaultBackupTTL: 168h  # 7 days (override per schedule for prod)
+
+credentials:
+  useSecret: true
+  existingSecret: velero-credentials
+  secretContents: {}
+
+# Enable node-agent for filesystem backup (required when snapshots disabled)
+deployNodeAgent: true
+
+nodeAgent:
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 100m
+    limits:
+      memory: 256Mi
+      cpu: 250m
