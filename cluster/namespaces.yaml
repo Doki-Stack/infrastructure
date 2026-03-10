@@ -62,7 +62,7 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: monitoring
+  name: doki-monitoring
   labels:
     app.kubernetes.io/part-of: doki-stack
     doki.io/environment: dev

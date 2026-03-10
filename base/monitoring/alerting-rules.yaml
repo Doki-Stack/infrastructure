@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: doki-stack-alerts
-  namespace: monitoring
+  namespace: doki-monitoring
   labels:
     prometheus: kube-prometheus
     role: alert-rules

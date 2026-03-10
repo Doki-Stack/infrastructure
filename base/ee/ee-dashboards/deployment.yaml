@@ -40,7 +40,7 @@ spec:
             - name: DRAGONFLY_URL
               value: redis://dragonfly.doki-data.svc.cluster.local:6379
             - name: PROMETHEUS_URL
-              value: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+              value: http://prometheus-kube-prometheus-prometheus.doki-monitoring.svc.cluster.local:9090
           resources:
             requests:
               memory: 128Mi

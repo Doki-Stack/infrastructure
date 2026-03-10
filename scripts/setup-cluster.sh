@@ -84,13 +84,13 @@ install_monitoring() {
   helm repo update
 
   info "Installing kube-prometheus-stack..."
-  helm upgrade --install monitoring prometheus-community/kube-prometheus-stack -n monitoring -f "$ROOT/helm-values/prometheus.yaml" --create-namespace --wait
+  helm upgrade --install monitoring prometheus-community/kube-prometheus-stack -n doki-monitoring -f "$ROOT/helm-values/prometheus.yaml" --create-namespace --wait
 
   info "Installing Loki..."
-  helm upgrade --install loki grafana/loki -n monitoring -f "$ROOT/helm-values/loki.yaml" --wait
+  helm upgrade --install loki grafana/loki -n doki-monitoring -f "$ROOT/helm-values/loki.yaml" --wait
 
   info "Installing Tempo..."
-  helm upgrade --install tempo grafana/tempo -n monitoring -f "$ROOT/helm-values/tempo.yaml" --wait
+  helm upgrade --install tempo grafana/tempo -n doki-monitoring -f "$ROOT/helm-values/tempo.yaml" --wait
 
   info "Monitoring stack installed"
 }

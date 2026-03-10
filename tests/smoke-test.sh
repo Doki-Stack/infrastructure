@@ -27,7 +27,7 @@ fi
 
 echo "Check: Services"
 SVC_FAIL=0
-for ns in doki-data doki-mcp doki-platform doki-agents doki-system monitoring doki-ai; do
+for ns in doki-data doki-mcp doki-platform doki-agents doki-system doki-monitoring doki-ai; do
   for svc in $(kubectl get svc -n "$ns" -o name 2>/dev/null); do
     ep=$(kubectl get "$svc" -n "$ns" -o jsonpath='{.subsets[*].addresses[*].ip}' 2>/dev/null)
     sel=$(kubectl get "$svc" -n "$ns" -o jsonpath='{.spec.selector}' 2>/dev/null)

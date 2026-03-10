@@ -17,7 +17,7 @@ spec:
           - resources:
               namespaces:
                 - kube-system
-                - monitoring
+                - doki-monitoring
       validate:
         message: "Containers must have readOnlyRootFilesystem: true"
         pattern:

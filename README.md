@@ -56,7 +56,7 @@ kind create cluster --name doki-stack --config cluster/kind-config.yaml
 | doki-agents   | agent-orchestrator, agent-automation, agent-review, agent-discovery (EE), agent-rollback (EE) |
 | doki-platform | api-server, platform-ui                                                 |
 | doki-ee       | ee-license-server, ee-multi-tenancy, ee-notifications, ee-compliance, ee-governance, ee-dashboards |
-| monitoring    | Prometheus, Grafana, Loki, Tempo                                         |
+| doki-monitoring | Prometheus, Grafana, Loki, Tempo                                      |
 | ai            | Ollama service/endpoints                                                 |
 
 ## Helm Charts

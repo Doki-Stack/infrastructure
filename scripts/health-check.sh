@@ -26,7 +26,7 @@ if ! kubectl cluster-info &>/dev/null; then
 fi
 pass "Kubernetes cluster accessible"
 
-REQUIRED_NS="doki-system doki-data doki-mcp doki-agents doki-platform doki-ee monitoring doki-ai"
+REQUIRED_NS="doki-system doki-data doki-mcp doki-agents doki-platform doki-ee doki-monitoring doki-ai"
 MISSING_NS=""
 for ns in $REQUIRED_NS; do
   if ! kubectl get namespace "$ns" &>/dev/null; then
@@ -106,8 +106,8 @@ else
   skip "Ollama (optional for dev)"
 fi
 
-GRAFANA_URL="${GRAFANA_URL:-http://monitoring-grafana.monitoring.svc.cluster.local:80}"
-if kubectl run "grafana-check-$$" --rm --restart=Never --image=curlimages/curl:latest -n monitoring -- curl -sf -o /dev/null -w '%{http_code}' "${GRAFANA_URL}/api/health" 2>/dev/null | grep -q 200; then
+GRAFANA_URL="${GRAFANA_URL:-http://monitoring-grafana.doki-monitoring.svc.cluster.local:80}"
+if kubectl run "grafana-check-$$" --rm --restart=Never --image=curlimages/curl:latest -n doki-monitoring -- curl -sf -o /dev/null -w '%{http_code}' "${GRAFANA_URL}/api/health" 2>/dev/null | grep -q 200; then
   pass "Grafana readiness"
 else
   fail "Grafana readiness"

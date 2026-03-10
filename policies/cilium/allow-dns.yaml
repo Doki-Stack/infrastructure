@@ -14,7 +14,7 @@ spec:
           - doki-platform
           - doki-ee
           - doki-system
-          - monitoring
+          - doki-monitoring
           - doki-ai
   egress:
     - toEndpoints:

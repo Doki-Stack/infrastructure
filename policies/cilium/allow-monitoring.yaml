@@ -5,7 +5,7 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      k8s:io.kubernetes.pod.namespace: monitoring
+      k8s:io.kubernetes.pod.namespace: doki-monitoring
   egress:
     - toEndpoints:
         - matchExpressions:
