@@ -9,7 +9,7 @@ type SetupConfig struct {
 	InstallCilium  bool
 	InstallVault   bool
 	InstallMonitor bool
-	OllamaMode     string // "local", "external", "skip"
+	LLMBackend     string // "ollama-local", "ollama-external", "vllm", "both", "skip"
 	OllamaModels   string
 	RunHealthCheck bool
 }
@@ -20,10 +20,26 @@ func DefaultSetupConfig() SetupConfig {
 		InstallCilium:  true,
 		InstallVault:   true,
 		InstallMonitor: true,
-		OllamaMode:     "local",
+		LLMBackend:     "ollama-local",
 		OllamaModels:   "qwen2.5-coder:14b nomic-embed-text",
 		RunHealthCheck: true,
 	}
+}
+
+func (c SetupConfig) WantsOllama() bool {
+	return c.LLMBackend == "ollama-local" || c.LLMBackend == "ollama-external" || c.LLMBackend == "both"
+}
+
+func (c SetupConfig) WantsVLLM() bool {
+	return c.LLMBackend == "vllm" || c.LLMBackend == "both"
+}
+
+func (c SetupConfig) OllamaIsLocal() bool {
+	return c.LLMBackend == "ollama-local" || c.LLMBackend == "both"
+}
+
+func (c SetupConfig) OllamaIsExternal() bool {
+	return c.LLMBackend == "ollama-external"
 }
 
 func (c SetupConfig) WantsCilium() bool {
@@ -74,14 +90,16 @@ func RunSetupForm() (SetupConfig, error) {
 
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title("Ollama LLM setup").
-				Description("Local runs Ollama as a pod inside the cluster.\nExternal points to Ollama running on the host machine.").
+				Title("LLM Backend").
+				Description("Ollama is for dev (CPU). vLLM is for production (GPU required).").
 				Options(
-					huh.NewOption("Local  — Run Ollama inside the cluster", "local"),
-					huh.NewOption("External  — Connect to host Ollama", "external"),
+					huh.NewOption("Ollama Local  — Run Ollama as a pod inside the cluster (dev)", "ollama-local"),
+					huh.NewOption("Ollama External  — Connect to Ollama on the host machine", "ollama-external"),
+					huh.NewOption("vLLM  — Production GPU inference (requires nvidia.com/gpu nodes)", "vllm"),
+					huh.NewOption("Both  — Ollama (local) + vLLM (for embeddings + chat split)", "both"),
 					huh.NewOption("Skip  — Set up LLM later", "skip"),
 				).
-				Value(&cfg.OllamaMode),
+				Value(&cfg.LLMBackend),
 		).Title("LLM Infrastructure"),
 
 		huh.NewGroup(
@@ -90,7 +108,7 @@ func RunSetupForm() (SetupConfig, error) {
 				Description("Space-separated list of Ollama models to download").
 				Value(&cfg.OllamaModels),
 		).Title("LLM Models").WithHideFunc(func() bool {
-			return cfg.OllamaMode != "local"
+			return !cfg.OllamaIsLocal()
 		}),
 
 		huh.NewGroup(

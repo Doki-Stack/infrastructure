@@ -76,6 +76,23 @@ resources:
 	return os.WriteFile(infraPath+"/base/ollama/kustomization.yaml", []byte(content), 0644)
 }
 
+func SetupVLLM(infraPath string) error {
+	res := runner.Run("kubectl", "apply", "-k", infraPath+"/base/vllm")
+	if !res.Success() {
+		return fmt.Errorf("apply vllm: %s", res.Stderr)
+	}
+
+	res = runner.Run("kubectl", "wait",
+		"--for=condition=available", "deployment/vllm",
+		"-n", "doki-ai", "--timeout=600s",
+	)
+	if !res.Success() {
+		return fmt.Errorf("vllm readiness (may need GPU nodes): %s", res.Stderr)
+	}
+
+	return nil
+}
+
 func detectHostIP() string {
 	if runner.CommandExists("docker") {
 		res := runner.Run("docker", "network", "inspect", "kind",

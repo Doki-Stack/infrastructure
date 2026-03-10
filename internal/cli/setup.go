@@ -124,25 +124,38 @@ func runSetup(cfg ui.SetupConfig) error {
 		fmt.Println(ui.Skip("Monitoring stack"))
 	}
 
-	// --- Ollama ---
-	switch cfg.OllamaMode {
-	case "local":
-		if err := ui.RunWithSpinner("Setting up Ollama (local)...", func() error {
-			return steps.SetupOllamaLocal(path, cfg.OllamaModels)
-		}); err != nil {
-			return err
+	// --- LLM ---
+	if cfg.WantsOllama() {
+		if cfg.OllamaIsLocal() {
+			if err := ui.RunWithSpinner("Setting up Ollama (local)...", func() error {
+				return steps.SetupOllamaLocal(path, cfg.OllamaModels)
+			}); err != nil {
+				return err
+			}
+			fmt.Println(ui.Pass("Ollama running locally in cluster"))
+		} else if cfg.OllamaIsExternal() {
+			if err := ui.RunWithSpinner("Setting up Ollama (external)...", func() error {
+				return steps.SetupOllamaExternal(path)
+			}); err != nil {
+				fmt.Println(ui.Warn("Ollama external setup incomplete — ensure host Ollama is running with OLLAMA_HOST=0.0.0.0:11434"))
+			} else {
+				fmt.Println(ui.Pass("Ollama configured (external host)"))
+			}
 		}
-		fmt.Println(ui.Pass("Ollama running locally in cluster"))
-	case "external":
-		if err := ui.RunWithSpinner("Setting up Ollama (external)...", func() error {
-			return steps.SetupOllamaExternal(path)
+	}
+
+	if cfg.WantsVLLM() {
+		if err := ui.RunWithSpinner("Deploying vLLM (production GPU inference)...", func() error {
+			return steps.SetupVLLM(path)
 		}); err != nil {
-			fmt.Println(ui.Warn("Ollama external setup incomplete — ensure host Ollama is running with OLLAMA_HOST=0.0.0.0:11434"))
+			fmt.Println(ui.Warn("vLLM deployment applied but may need GPU nodes to schedule: " + err.Error()))
 		} else {
-			fmt.Println(ui.Pass("Ollama configured (external host)"))
+			fmt.Println(ui.Pass("vLLM deployed and ready"))
 		}
-	case "skip":
-		fmt.Println(ui.Skip("Ollama LLM setup"))
+	}
+
+	if cfg.LLMBackend == "skip" {
+		fmt.Println(ui.Skip("LLM setup"))
 	}
 
 	// --- Health check ---
