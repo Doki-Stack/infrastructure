@@ -9,7 +9,7 @@ type SetupConfig struct {
 	InstallCilium  bool
 	InstallVault   bool
 	InstallMonitor bool
-	LLMBackend     string // "ollama-local", "ollama-external", "vllm", "both", "skip"
+	LLMBackend     string // "ollama-local", "ollama-external", "vllm-cpu", "vllm-gpu", "both-cpu", "both-gpu", "skip"
 	OllamaModels   string
 	RunHealthCheck bool
 }
@@ -27,15 +27,33 @@ func DefaultSetupConfig() SetupConfig {
 }
 
 func (c SetupConfig) WantsOllama() bool {
-	return c.LLMBackend == "ollama-local" || c.LLMBackend == "ollama-external" || c.LLMBackend == "both"
+	switch c.LLMBackend {
+	case "ollama-local", "ollama-external", "both-cpu", "both-gpu":
+		return true
+	}
+	return false
 }
 
 func (c SetupConfig) WantsVLLM() bool {
-	return c.LLMBackend == "vllm" || c.LLMBackend == "both"
+	switch c.LLMBackend {
+	case "vllm-cpu", "vllm-gpu", "both-cpu", "both-gpu":
+		return true
+	}
+	return false
+}
+
+func (c SetupConfig) VLLMMode() string {
+	switch c.LLMBackend {
+	case "vllm-cpu", "both-cpu":
+		return "cpu"
+	case "vllm-gpu", "both-gpu":
+		return "gpu"
+	}
+	return ""
 }
 
 func (c SetupConfig) OllamaIsLocal() bool {
-	return c.LLMBackend == "ollama-local" || c.LLMBackend == "both"
+	return c.LLMBackend == "ollama-local" || c.LLMBackend == "both-cpu" || c.LLMBackend == "both-gpu"
 }
 
 func (c SetupConfig) OllamaIsExternal() bool {
@@ -91,12 +109,14 @@ func RunSetupForm() (SetupConfig, error) {
 		huh.NewGroup(
 			huh.NewSelect[string]().
 				Title("LLM Backend").
-				Description("Ollama is for dev (CPU). vLLM is for production (GPU required).").
+				Description("Choose your LLM inference engine and mode.").
 				Options(
-					huh.NewOption("Ollama Local  — Run Ollama as a pod inside the cluster (dev)", "ollama-local"),
-					huh.NewOption("Ollama External  — Connect to Ollama on the host machine", "ollama-external"),
-					huh.NewOption("vLLM  — Production GPU inference (requires nvidia.com/gpu nodes)", "vllm"),
-					huh.NewOption("Both  — Ollama (local) + vLLM (for embeddings + chat split)", "both"),
+					huh.NewOption("Ollama Local  — In-cluster pod, CPU (dev)", "ollama-local"),
+					huh.NewOption("Ollama External  — Connect to Ollama on the host", "ollama-external"),
+					huh.NewOption("vLLM CPU  — OpenAI-compatible API, CPU mode (dev, ~4GB RAM)", "vllm-cpu"),
+					huh.NewOption("vLLM GPU  — OpenAI-compatible API, GPU mode (prod, requires nvidia.com/gpu)", "vllm-gpu"),
+					huh.NewOption("Both (CPU)  — Ollama (embeddings) + vLLM CPU (chat)", "both-cpu"),
+					huh.NewOption("Both (GPU)  — Ollama (embeddings) + vLLM GPU (chat)", "both-gpu"),
 					huh.NewOption("Skip  — Set up LLM later", "skip"),
 				).
 				Value(&cfg.LLMBackend),

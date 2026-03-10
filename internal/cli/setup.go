@@ -145,12 +145,14 @@ func runSetup(cfg ui.SetupConfig) error {
 	}
 
 	if cfg.WantsVLLM() {
-		if err := ui.RunWithSpinner("Deploying vLLM (production GPU inference)...", func() error {
-			return steps.SetupVLLM(path)
+		mode := cfg.VLLMMode()
+		spinnerMsg := fmt.Sprintf("Deploying vLLM (%s mode)...", mode)
+		if err := ui.RunWithSpinner(spinnerMsg, func() error {
+			return steps.SetupVLLM(path, mode)
 		}); err != nil {
-			fmt.Println(ui.Warn("vLLM deployment applied but may need GPU nodes to schedule: " + err.Error()))
+			fmt.Println(ui.Warn("vLLM deployment applied but not yet ready: " + err.Error()))
 		} else {
-			fmt.Println(ui.Pass("vLLM deployed and ready"))
+			fmt.Println(ui.Pass(fmt.Sprintf("vLLM deployed (%s mode)", mode)))
 		}
 	}
 

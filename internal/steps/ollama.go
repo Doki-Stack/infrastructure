@@ -76,21 +76,43 @@ resources:
 	return os.WriteFile(infraPath+"/base/ollama/kustomization.yaml", []byte(content), 0644)
 }
 
-func SetupVLLM(infraPath string) error {
+func SetupVLLM(infraPath string, mode string) error {
+	if err := writeVLLMKustomization(infraPath, "./"+mode); err != nil {
+		return err
+	}
+
 	res := runner.Run("kubectl", "apply", "-k", infraPath+"/base/vllm")
 	if !res.Success() {
 		return fmt.Errorf("apply vllm: %s", res.Stderr)
 	}
 
+	timeout := "600s"
+	if mode == "cpu" {
+		timeout = "900s"
+	}
+
 	res = runner.Run("kubectl", "wait",
 		"--for=condition=available", "deployment/vllm",
-		"-n", "doki-ai", "--timeout=600s",
+		"-n", "doki-ai", "--timeout="+timeout,
 	)
 	if !res.Success() {
-		return fmt.Errorf("vllm readiness (may need GPU nodes): %s", res.Stderr)
+		if mode == "gpu" {
+			return fmt.Errorf("vllm readiness (may need GPU nodes): %s", res.Stderr)
+		}
+		return fmt.Errorf("vllm readiness: %s", res.Stderr)
 	}
 
 	return nil
+}
+
+func writeVLLMKustomization(infraPath, ref string) error {
+	content := fmt.Sprintf(`apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - %s
+`, ref)
+	return os.WriteFile(infraPath+"/base/vllm/kustomization.yaml", []byte(content), 0644)
 }
 
 func detectHostIP() string {

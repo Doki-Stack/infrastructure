@@ -1,8 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
+# Default: CPU mode for local dev.
+# To use GPU mode, change this to ./gpu
 resources:
-  - deployment.yaml
-  - service.yaml
-  - pvc.yaml
-  - secret.yaml
-  - servicemonitor.yaml
+  - ./cpu
