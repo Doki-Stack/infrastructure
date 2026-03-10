@@ -1,0 +1,40 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-monitoring-scrape
+spec:
+  endpointSelector:
+    matchLabels:
+      k8s:io.kubernetes.pod.namespace: monitoring
+  egress:
+    - toEndpoints:
+        - matchExpressions:
+            - key: k8s:io.kubernetes.pod.namespace
+              operator: In
+              values:
+                - doki-data
+                - doki-mcp
+                - doki-agents
+                - doki-platform
+                - doki-ee
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+            - port: "9100"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP
+            - port: "3000"
+              protocol: TCP
+            - port: "8000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP

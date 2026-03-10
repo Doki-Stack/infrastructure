@@ -1,0 +1,65 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-mcp-to-data-and-ai
+  namespace: doki-mcp
+spec:
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: minio
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: qdrant
+      toPorts:
+        - ports:
+            - port: "6333"
+              protocol: TCP
+            - port: "6334"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: dragonfly
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: rabbitmq
+      toPorts:
+        - ports:
+            - port: "5672"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: "*.ai.svc.cluster.local"
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP

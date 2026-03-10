@@ -1,0 +1,47 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-platform-to-data-and-agents
+  namespace: doki-platform
+spec:
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: dragonfly
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: rabbitmq
+      toPorts:
+        - ports:
+            - port: "5672"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: "*.doki-agents.svc.cluster.local"
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP

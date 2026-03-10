@@ -1,0 +1,160 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ee-license-server
+  namespace: doki-ee
+  annotations:
+    konghq.com/plugins: doki-system/jwt-auth, doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /api/license
+            pathType: Prefix
+            backend:
+              service:
+                name: ee-license-server
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-memory
+  namespace: doki-mcp
+  annotations:
+    konghq.com/plugins: doki-system/jwt-auth, doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /api/memory
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-memory
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-registry
+  namespace: doki-mcp
+  annotations:
+    konghq.com/plugins: doki-system/jwt-auth, doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /api/registry
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-registry
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ee-multi-tenancy
+  namespace: doki-ee
+  annotations:
+    konghq.com/plugins: doki-system/jwt-auth, doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /api/orgs
+            pathType: Prefix
+            backend:
+              service:
+                name: ee-multi-tenancy
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ee-notifications
+  namespace: doki-ee
+  annotations:
+    konghq.com/plugins: doki-system/jwt-auth, doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /api/notifications
+            pathType: Prefix
+            backend:
+              service:
+                name: ee-notifications
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ee-compliance
+  namespace: doki-ee
+  annotations:
+    konghq.com/plugins: doki-system/jwt-auth, doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /api/compliance
+            pathType: Prefix
+            backend:
+              service:
+                name: ee-compliance
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ee-governance
+  namespace: doki-ee
+  annotations:
+    konghq.com/plugins: doki-system/jwt-auth, doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /api/governance
+            pathType: Prefix
+            backend:
+              service:
+                name: ee-governance
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ee-dashboards
+  namespace: doki-ee
+  annotations:
+    konghq.com/plugins: doki-system/jwt-auth, doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /api/dashboards
+            pathType: Prefix
+            backend:
+              service:
+                name: ee-dashboards
+                port:
+                  number: 3000

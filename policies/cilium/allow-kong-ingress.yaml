@@ -1,0 +1,33 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-kong-to-platform-and-mcp
+  namespace: doki-system
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: kong
+  egress:
+    - toFQDNs:
+        - matchName: "*.doki-platform.svc.cluster.local"
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+            - port: "8000"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: "*.doki-mcp.svc.cluster.local"
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP

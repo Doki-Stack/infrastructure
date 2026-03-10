@@ -1,0 +1,28 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-probes
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: check-probes
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - doki-data
+                - doki-mcp
+                - doki-agents
+                - doki-platform
+                - doki-ee
+                - doki-system
+      validate:
+        message: "All containers must have readinessProbe and livenessProbe"
+        pattern:
+          spec:
+            containers:
+              - livenessProbe: "?*"
+                readinessProbe: "?*"

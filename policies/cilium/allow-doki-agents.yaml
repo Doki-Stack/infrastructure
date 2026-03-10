@@ -1,0 +1,61 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-agents-to-data-mcp-ai
+  namespace: doki-agents
+spec:
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: rabbitmq
+      toPorts:
+        - ports:
+            - port: "5672"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: minio
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: doki-data
+            app.kubernetes.io/name: dragonfly
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: "*.doki-mcp.svc.cluster.local"
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: "*.ai.svc.cluster.local"
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP

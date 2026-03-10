@@ -1,0 +1,23 @@
+deploymentMode: SingleBinary
+
+loki:
+  commonConfig:
+    replication_factor: 1
+  storage:
+    type: filesystem
+  limits_config:
+    retention_period: 168h
+
+singleBinary:
+  replicas: 1
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 100m
+    limits:
+      memory: 256Mi
+      cpu: 250m
+
+monitoring:
+  selfMonitoring:
+    enabled: false

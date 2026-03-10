@@ -1,0 +1,29 @@
+driver:
+  kind: ebpf
+
+falco:
+  json_output: true
+  json_include_output_property: true
+  json_include_tags_property: true
+  file_output:
+    enabled: true
+    keep_alive: false
+    filename: /var/log/falco_events.json
+
+mounts:
+  volumes:
+    - name: doki-custom-rules
+      configMap:
+        name: falco-doki-custom-rules
+  volumeMounts:
+    - name: doki-custom-rules
+      mountPath: /etc/falco/rules.d/doki
+      readOnly: true
+
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 100m
+  limits:
+    memory: 256Mi
+    cpu: 250m

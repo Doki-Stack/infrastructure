@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: falco-doki-custom-rules
+  namespace: doki-system
+  labels:
+    app.kubernetes.io/part-of: doki-stack
+data:
+  custom-rules.yaml: |
+    - rule: Shell access in doki container
+      desc: A shell was used as the entrypoint/exec point into a doki-stack container
+      condition: >
+        spawned_process and container and shell_procs and proc.tty != 0
+        and container_entrypoint and k8s.ns.name startswith "doki-"
+      output: "Shell access in doki container (user=%user.name %container.info shell=%proc.name parent=%proc.pname cmdline=%proc.cmdline)"
+      priority: WARNING
+      tags: [container, shell, mitre_execution, doki-stack]
+
+    - rule: Privilege escalation in doki container
+      desc: Privilege escalation attempt in doki-stack container
+      condition: >
+        spawned_process and container and proc.name in (sudo, su, doas)
+        and k8s.ns.name startswith "doki-"
+      output: "Privilege escalation attempt (user=%user.name container=%container.info proc=%proc.cmdline)"
+      priority: WARNING
+      tags: [container, privilege_escalation, mitre_privilege_escalation, doki-stack]
+
+    - rule: Direct database access bypassing services
+      desc: Direct PostgreSQL/Redis connection from namespace that should use MCP
+      condition: >
+        outbound and container and
+        (fd.dport in (5432, 6379)) and
+        k8s.ns.name in (doki-platform, doki-mcp) and
+        not k8s.ns.name in (doki-data)
+      output: "Direct DB access from %k8s.ns.name (expected via MCP) (dest=%fd.rip port=%fd.dport)"
+      priority: WARNING
+      tags: [doki-stack, policy_violation, mitre_credential_access]
+
+    - rule: Unexpected outbound connection from doki-data
+      desc: Outbound connection from doki-data to non-standard port
+      condition: >
+        outbound and container and k8s.ns.name = doki-data and
+        not fd.dport in (53, 80, 443, 5432, 5672, 6379, 6333, 6334, 9000, 9001, 8200, 9090, 3100, 11434)
+      output: "Unexpected outbound from doki-data (user=%user.name dest=%fd.rip port=%fd.dport container=%container.info)"
+      priority: WARNING
+      tags: [container, network, mitre_command_and_control, doki-stack]

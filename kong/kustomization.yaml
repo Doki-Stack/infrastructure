@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - kong-plugins/jwt-auth.yaml
+  - kong-plugins/rate-limiting.yaml
+  - kong-plugins/cors.yaml
+  - routes/ce-routes.yaml
+  - routes/ee-routes.yaml

@@ -1,0 +1,24 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: cors
+  namespace: doki-system
+plugin: cors
+config:
+  origins:
+    - "*"
+  methods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    - OPTIONS
+  headers:
+    - Accept
+    - Authorization
+    - Content-Type
+    - X-Request-Id
+    - X-Org-Id
+  credentials: true
+  max_age: 3600

@@ -1,0 +1,44 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-registries
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: check-registry
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+      validate:
+        message: "Images must be from harbor.doki.local/ or allowed Docker Hub images"
+        foreach:
+          - list: "request.object.spec.containers[]"
+            anyPattern:
+              - image: "harbor.doki.local/*"
+              - image: "docker.io/rabbitmq*"
+              - image: "docker.io/library/postgres*"
+              - image: "docker.io/library/redis*"
+              - image: "docker.io/minio/minio*"
+              - image: "docker.io/qdrant/qdrant*"
+              - image: "docker.io/hashicorp/vault*"
+              - image: "docker.io/ollama/ollama*"
+              - image: "docker.io/dragonflydb/dragonfly*"
+          - list: 'request.object.spec.initContainers || `[]`'
+            anyPattern:
+              - image: "harbor.doki.local/*"
+              - image: "docker.io/rabbitmq*"
+              - image: "docker.io/library/postgres*"
+              - image: "docker.io/library/redis*"
+              - image: "docker.io/minio/minio*"
+              - image: "docker.io/qdrant/qdrant*"
+              - image: "docker.io/hashicorp/vault*"
+              - image: "docker.io/ollama/ollama*"
+              - image: "docker.io/dragonflydb/dragonfly*"

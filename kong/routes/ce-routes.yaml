@@ -1,0 +1,40 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: platform-ui
+  namespace: doki-platform
+  annotations:
+    konghq.com/plugins: doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: platform-ui
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-server
+  namespace: doki-platform
+  annotations:
+    konghq.com/plugins: doki-system/jwt-auth, doki-system/rate-limiting, doki-system/cors
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-server
+                port:
+                  number: 3000

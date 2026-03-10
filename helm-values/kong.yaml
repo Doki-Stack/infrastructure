@@ -1,0 +1,27 @@
+env:
+  database: "off"
+
+proxy:
+  type: NodePort
+  http:
+    nodePort: 30080
+  tls:
+    nodePort: 30443
+
+admin:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+
+ingressController:
+  enabled: true
+  installCRDs: false
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+  limits:
+    memory: 512Mi
+    cpu: 500m

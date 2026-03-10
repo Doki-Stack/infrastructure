@@ -1,0 +1,83 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: doki-stack-alerts
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+spec:
+  groups:
+    - name: doki-stack
+      interval: 30s
+      rules:
+        - alert: PodCrashLooping
+          expr: |
+            rate(kube_pod_container_status_restarts_total{namespace=~"doki-.*"}[5m]) * 60 * 5 > 3
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is crash looping"
+            description: "Pod has restarted more than 3 times in the last 5 minutes."
+
+        - alert: HighMemoryUsage
+          expr: |
+            (container_memory_usage_bytes{namespace=~"doki-.*"} / container_spec_memory_limit_bytes{namespace=~"doki-.*"}) > 0.9
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Container {{ $labels.container }} in {{ $labels.pod }} using >90% memory limit"
+
+        - alert: PostgreSQLDown
+          expr: up{job="postgresql"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PostgreSQL target is down"
+
+        - alert: QdrantDown
+          expr: up{job="qdrant"} == 0
+          for: 1m
+          labels:
+            severity: critical
+            fail-closed: "true"
+          annotations:
+            summary: "Qdrant is down — fail closed (policy context unavailable)"
+
+        - alert: RabbitMQDLQDepth
+          expr: rabbitmq_queue_messages{queue=~".*dlq.*"} > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "RabbitMQ DLQ {{ $labels.queue }} has {{ $value }} messages"
+
+        - alert: VaultSealed
+          expr: vault_core_unsealed == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Vault is sealed"
+
+        - alert: HighErrorRate
+          expr: |
+            (sum(rate(http_requests_total{status=~"5..", namespace=~"doki-.*"}[5m])) by (service)
+            / sum(rate(http_requests_total{namespace=~"doki-.*"}[5m])) by (service)) > 0.01
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Service {{ $labels.service }} has >1% 5xx error rate"
+
+        - alert: SlowMCPResponses
+          expr: |
+            histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{namespace="doki-mcp"}[5m])) by (le, service)) > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "MCP endpoint {{ $labels.service }} p99 latency >5s"

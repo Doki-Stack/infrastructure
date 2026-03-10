@@ -1,0 +1,11 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: rate-limiting
+  namespace: doki-system
+plugin: rate-limiting
+config:
+  minute: 100
+  policy: redis
+  redis_host: dragonfly.doki-data.svc.cluster.local
+  redis_port: 6379

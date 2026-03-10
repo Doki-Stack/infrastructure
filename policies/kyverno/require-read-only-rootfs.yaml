@@ -1,0 +1,27 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-read-only-rootfs
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: check-read-only-rootfs
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - monitoring
+      validate:
+        message: "Containers must have readOnlyRootFilesystem: true"
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  readOnlyRootFilesystem: true

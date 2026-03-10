@@ -1,0 +1,22 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: jwt-auth
+  namespace: doki-system
+plugin: openid-connect
+config:
+  issuer: "https://YOUR_AUTH0_DOMAIN.auth0.com/"
+  auth_methods:
+    - bearer
+  scopes_required: []
+  scopes_claim: []
+  audience_required: []
+  upstream_headers_claims:
+    - sub
+    - "https://api.doki.local/org_id"
+    - "https://api.doki.local/roles"
+  upstream_headers_names:
+    - X-User-Id
+    - X-Org-Id
+    - X-User-Roles
+  cache_ttl: 3600

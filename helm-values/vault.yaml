@@ -1,0 +1,16 @@
+server:
+  dev:
+    enabled: true
+    devRootToken: "root-token-dev"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  dataStorage:
+    size: 1Gi
+
+injector:
+  enabled: false
