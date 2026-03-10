@@ -1,0 +1,42 @@
+mode: standalone
+replicas: 1
+
+rootUser: minioadmin
+rootPassword: changeme-in-vault
+
+persistence:
+  size: 20Gi
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+  limits:
+    memory: 1Gi
+    cpu: "1000m"
+
+consoleService:
+  type: NodePort
+  nodePort: 30901
+
+buckets:
+  - name: scanner-artifacts
+    policy: none
+    purge: false
+    versioning: true
+  - name: terraform-states
+    policy: none
+    purge: false
+    versioning: true
+  - name: execution-plans
+    policy: none
+    purge: false
+    versioning: true
+  - name: prompts
+    policy: none
+    purge: false
+    versioning: true
+
+metrics:
+  serviceMonitor:
+    enabled: true

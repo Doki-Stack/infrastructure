@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: doki-system
+  labels:
+    app.kubernetes.io/part-of: doki-stack
+    doki.io/environment: dev
+  annotations:
+    doki.io/purpose: "Kong, Argo CD, ESO, cert-manager — platform control plane"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: doki-data
+  labels:
+    app.kubernetes.io/part-of: doki-stack
+    doki.io/environment: dev
+  annotations:
+    doki.io/purpose: "PostgreSQL, MinIO, Qdrant, Dragonfly, RabbitMQ, Vault — data layer"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: doki-mcp
+  labels:
+    app.kubernetes.io/part-of: doki-stack
+    doki.io/environment: dev
+  annotations:
+    doki.io/purpose: "MCP servers — scanner, execution, policy, memory (EE), registry (EE)"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: doki-agents
+  labels:
+    app.kubernetes.io/part-of: doki-stack
+    doki.io/environment: dev
+  annotations:
+    doki.io/purpose: "LangGraph agents — orchestrator, automation, review, discovery (EE), rollback (EE)"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: doki-platform
+  labels:
+    app.kubernetes.io/part-of: doki-stack
+    doki.io/environment: dev
+  annotations:
+    doki.io/purpose: "API server, platform UI — user-facing services"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: doki-ee
+  labels:
+    app.kubernetes.io/part-of: doki-stack
+    doki.io/environment: dev
+  annotations:
+    doki.io/purpose: "Enterprise Edition — license server, multi-tenancy, notifications, compliance, governance, dashboards"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    app.kubernetes.io/part-of: doki-stack
+    doki.io/environment: dev
+  annotations:
+    doki.io/purpose: "Prometheus, Grafana, Loki, Tempo — observability stack"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai
+  labels:
+    app.kubernetes.io/part-of: doki-stack
+    doki.io/environment: dev
+  annotations:
+    doki.io/purpose: "Ollama — LLM inference endpoints"
