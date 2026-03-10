@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ee-dashboards
+  labels:
+    app.kubernetes.io/name: ee-dashboards
+    app.kubernetes.io/component: ee
+    app.kubernetes.io/part-of: doki-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ee-dashboards
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ee-dashboards
+        app.kubernetes.io/component: ee
+        app.kubernetes.io/part-of: doki-stack
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: ee-dashboards
+          image: ee-dashboards:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: DATABASE_URL
+              value: postgres://app_service:changeme@postgres-postgresql.doki-data.svc.cluster.local:5432/ai_automation
+            - name: DRAGONFLY_URL
+              value: redis://dragonfly.doki-data.svc.cluster.local:6379
+            - name: PROMETHEUS_URL
+              value: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 250m
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL

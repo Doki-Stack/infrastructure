@@ -1,0 +1,322 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: platform-ui
+  namespace: doki-platform
+spec:
+  template:
+    spec:
+      containers:
+        - name: platform-ui
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 512Mi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+  namespace: doki-platform
+spec:
+  template:
+    spec:
+      containers:
+        - name: api-server
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-scanner
+  namespace: doki-mcp
+spec:
+  template:
+    spec:
+      containers:
+        - name: mcp-scanner
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-execution
+  namespace: doki-mcp
+spec:
+  template:
+    spec:
+      containers:
+        - name: mcp-execution
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-policy
+  namespace: doki-mcp
+spec:
+  template:
+    spec:
+      containers:
+        - name: mcp-policy
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-orchestrator
+  namespace: doki-agents
+spec:
+  template:
+    spec:
+      containers:
+        - name: agent-orchestrator
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-automation
+  namespace: doki-agents
+spec:
+  template:
+    spec:
+      containers:
+        - name: agent-automation
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-review
+  namespace: doki-agents
+spec:
+  template:
+    spec:
+      containers:
+        - name: agent-review
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 512Mi
+              cpu: 500m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: doki-data
+spec:
+  template:
+    spec:
+      containers:
+        - name: rabbitmq
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 512Mi
+              cpu: 500m
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ee-license-server
+  namespace: doki-ee
+spec:
+  template:
+    spec:
+      containers:
+        - name: ee-license-server
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ee-compliance
+  namespace: doki-ee
+spec:
+  template:
+    spec:
+      containers:
+        - name: ee-compliance
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ee-notifications
+  namespace: doki-ee
+spec:
+  template:
+    spec:
+      containers:
+        - name: ee-notifications
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ee-multi-tenancy
+  namespace: doki-ee
+spec:
+  template:
+    spec:
+      containers:
+        - name: ee-multi-tenancy
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-registry
+  namespace: doki-mcp
+spec:
+  template:
+    spec:
+      containers:
+        - name: mcp-registry
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-memory
+  namespace: doki-mcp
+spec:
+  template:
+    spec:
+      containers:
+        - name: mcp-memory
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-rollback
+  namespace: doki-agents
+spec:
+  template:
+    spec:
+      containers:
+        - name: agent-rollback
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-discovery
+  namespace: doki-agents
+spec:
+  template:
+    spec:
+      containers:
+        - name: agent-discovery
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 500m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          imagePullPolicy: Always

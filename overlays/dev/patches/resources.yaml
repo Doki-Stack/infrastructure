@@ -1,0 +1,170 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: platform-ui
+  namespace: doki-platform
+spec:
+  template:
+    spec:
+      containers:
+        - name: platform-ui
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 128Mi
+              cpu: 200m
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+  namespace: doki-platform
+spec:
+  template:
+    spec:
+      containers:
+        - name: api-server
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-scanner
+  namespace: doki-mcp
+spec:
+  template:
+    spec:
+      containers:
+        - name: mcp-scanner
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-execution
+  namespace: doki-mcp
+spec:
+  template:
+    spec:
+      containers:
+        - name: mcp-execution
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-policy
+  namespace: doki-mcp
+spec:
+  template:
+    spec:
+      containers:
+        - name: mcp-policy
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-orchestrator
+  namespace: doki-agents
+spec:
+  template:
+    spec:
+      containers:
+        - name: agent-orchestrator
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-automation
+  namespace: doki-agents
+spec:
+  template:
+    spec:
+      containers:
+        - name: agent-automation
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-review
+  namespace: doki-agents
+spec:
+  template:
+    spec:
+      containers:
+        - name: agent-review
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 128Mi
+              cpu: 200m
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: doki-data
+spec:
+  template:
+    spec:
+      containers:
+        - name: rabbitmq
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m

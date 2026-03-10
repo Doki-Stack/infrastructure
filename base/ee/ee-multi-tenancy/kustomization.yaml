@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: doki-ee
+
+resources:
+  - deployment.yaml
+  - service.yaml
+
+commonLabels:
+  app.kubernetes.io/name: ee-multi-tenancy
+  app.kubernetes.io/component: ee
+  app.kubernetes.io/part-of: doki-stack
+  app.kubernetes.io/managed-by: argocd
+  doki.io/org-scope: "true"
+
+images:
+  - name: ee-multi-tenancy
+    newName: harbor.doki.local/doki-ee/ee-multi-tenancy
+    newTag: latest
