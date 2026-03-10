@@ -47,7 +47,7 @@ spec:
             - name: MCP_POLICY_URL
               value: http://mcp-policy.doki-mcp.svc.cluster.local:3000
             - name: OLLAMA_URL
-              value: http://ollama.ai.svc.cluster.local:11434
+              value: http://ollama.doki-ai.svc.cluster.local:11434
           resources:
             requests:
               memory: 256Mi

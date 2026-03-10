@@ -44,7 +44,7 @@ spec:
             - name: RABBITMQ_URL
               value: amqp://user:CHANGE_ME@rabbitmq.doki-data.svc.cluster.local:5672/%2F
             - name: OLLAMA_URL
-              value: http://ollama.ai.svc.cluster.local:11434
+              value: http://ollama.doki-ai.svc.cluster.local:11434
           resources:
             requests:
               memory: 128Mi

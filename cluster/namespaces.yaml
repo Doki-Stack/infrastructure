@@ -72,9 +72,9 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ai
+  name: doki-ai
   labels:
     app.kubernetes.io/part-of: doki-stack
     doki.io/environment: dev
   annotations:
-    doki.io/purpose: "Ollama — LLM inference endpoints"
+    doki.io/purpose: "Ollama and vLLM — LLM inference endpoints"

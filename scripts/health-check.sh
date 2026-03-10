@@ -26,7 +26,7 @@ if ! kubectl cluster-info &>/dev/null; then
 fi
 pass "Kubernetes cluster accessible"
 
-REQUIRED_NS="doki-system doki-data doki-mcp doki-agents doki-platform doki-ee monitoring ai"
+REQUIRED_NS="doki-system doki-data doki-mcp doki-agents doki-platform doki-ee monitoring doki-ai"
 MISSING_NS=""
 for ns in $REQUIRED_NS; do
   if ! kubectl get namespace "$ns" &>/dev/null; then
@@ -99,8 +99,8 @@ else
   fail "Dragonfly PING"
 fi
 
-OLLAMA_URL="${OLLAMA_URL:-http://ollama.ai.svc.cluster.local:11434}"
-if kubectl run "ollama-check-$$" --rm --restart=Never --image=curlimages/curl:latest -n ai -- curl -sf "${OLLAMA_URL}/api/tags" -o /dev/null 2>/dev/null; then
+OLLAMA_URL="${OLLAMA_URL:-http://ollama.doki-ai.svc.cluster.local:11434}"
+if kubectl run "ollama-check-$$" --rm --restart=Never --image=curlimages/curl:latest -n doki-ai -- curl -sf "${OLLAMA_URL}/api/tags" -o /dev/null 2>/dev/null; then
   pass "Ollama"
 else
   skip "Ollama (optional for dev)"

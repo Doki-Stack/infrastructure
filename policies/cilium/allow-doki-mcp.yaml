@@ -49,10 +49,12 @@ spec:
             - port: "5672"
               protocol: TCP
     - toFQDNs:
-        - matchName: "*.ai.svc.cluster.local"
+        - matchName: "*.doki-ai.svc.cluster.local"
       toPorts:
         - ports:
             - port: "11434"
+              protocol: TCP
+            - port: "8000"
               protocol: TCP
     - toEndpoints:
         - matchLabels:

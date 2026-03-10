@@ -12,6 +12,6 @@ if [ -z "$HOST_IP" ]; then
   exit 1
 fi
 
-kubectl patch endpoints ollama -n ai --type=merge -p "{\"subsets\":[{\"addresses\":[{\"ip\":\"$HOST_IP\"}],\"ports\":[{\"port\":11434,\"protocol\":\"TCP\"}]}]}"
+kubectl patch endpoints ollama -n doki-ai --type=merge -p "{\"subsets\":[{\"addresses\":[{\"ip\":\"$HOST_IP\"}],\"ports\":[{\"port\":11434,\"protocol\":\"TCP\"}]}]}"
 
-kubectl run curl-ollama-verify --rm -i --restart=Never --image=curlimages/curl -n ai -- curl -sf http://ollama.ai.svc.cluster.local:11434/api/tags
+kubectl run curl-ollama-verify --rm -i --restart=Never --image=curlimages/curl -n doki-ai -- curl -sf http://ollama.doki-ai.svc.cluster.local:11434/api/tags

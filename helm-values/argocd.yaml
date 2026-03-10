@@ -32,4 +32,4 @@ repoServer:
 
 configs:
   params:
-    application.namespaces: "doki-*,monitoring,ai"
+    application.namespaces: "doki-*,monitoring,doki-ai"

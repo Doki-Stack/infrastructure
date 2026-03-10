@@ -15,7 +15,7 @@ spec:
           - doki-ee
           - doki-system
           - monitoring
-          - ai
+          - doki-ai
   egress:
     - toEndpoints:
         - matchLabels:

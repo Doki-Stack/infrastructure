@@ -42,7 +42,7 @@ spec:
             - name: DRAGONFLY_URL
               value: redis://dragonfly.doki-data.svc.cluster.local:6379
             - name: OLLAMA_URL
-              value: http://ollama.ai.svc.cluster.local:11434
+              value: http://ollama.doki-ai.svc.cluster.local:11434
             - name: LICENSE_SERVER_URL
               value: http://ee-license-server.doki-ee.svc.cluster.local:3000
           resources:
