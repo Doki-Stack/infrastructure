@@ -1,5 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
+# Default: run Ollama locally inside the cluster.
+# To use host Ollama instead, change this to ./external
 resources:
-  - service.yaml
-  - endpoints.yaml
+  - ./local

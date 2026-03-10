@@ -96,10 +96,9 @@ install_monitoring() {
 }
 
 setup_ollama() {
-  info "Setting up Ollama endpoint..."
-  kubectl apply -k "$ROOT/base/ollama"
-  "$ROOT/scripts/setup-ollama-endpoint.sh" || warn "Ollama setup may require host Ollama running"
-  info "Ollama endpoint configured"
+  info "Setting up Ollama (mode: ${OLLAMA_MODE:-local})..."
+  "$ROOT/scripts/setup-ollama.sh" --mode "${OLLAMA_MODE:-local}"
+  info "Ollama setup complete"
 }
 
 run_health_check() {
