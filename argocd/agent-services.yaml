@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: doki-agent-services
+  namespace: doki-system
+spec:
+  generators:
+    - list:
+        elements:
+          - name: agent-orchestrator
+            path: base/agent-orchestrator
+            namespace: doki-agents
+          - name: agent-automation
+            path: base/agent-automation
+            namespace: doki-agents
+          - name: agent-review
+            path: base/agent-review
+            namespace: doki-agents
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: doki-system
+      annotations:
+        argocd.argoproj.io/sync-wave: "4"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Doki-Stack/infrastructure.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true

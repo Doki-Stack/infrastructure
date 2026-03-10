@@ -1,0 +1,42 @@
+expose:
+  type: nodePort
+  tls:
+    enabled: false
+  nodePort:
+    name: http
+    ports:
+      http: 30002
+
+externalURL: http://harbor.doki.local
+
+persistence:
+  enabled: true
+  persistentVolumeClaim:
+    registry:
+      size: 20Gi
+  imageChartStorage:
+    type: filesystem
+    filesystem:
+      rootdirectory: /storage
+
+trivy:
+  enabled: true
+  storageClass: ""
+  persistence:
+    size: 5Gi
+  blockOnCritical: false
+
+core:
+  replicas: 1
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 100m
+    limits:
+      memory: 256Mi
+      cpu: 250m
+
+notary:
+  enabled: false
+chartmuseum:
+  enabled: false

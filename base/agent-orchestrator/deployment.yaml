@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-orchestrator
+  labels:
+    app.kubernetes.io/name: agent-orchestrator
+    app.kubernetes.io/component: agent
+    app.kubernetes.io/part-of: doki-stack
+    app.kubernetes.io/managed-by: argocd
+    doki.io/org-scope: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: agent-orchestrator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: agent-orchestrator
+        app.kubernetes.io/component: agent
+        app.kubernetes.io/part-of: doki-stack
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: agent-orchestrator
+          image: harbor.doki.local/doki-ce/agent-orchestrator:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: DATABASE_URL
+              value: postgres://app_service:changeme@postgres-postgresql.doki-data.svc.cluster.local:5432/ai_automation
+            - name: RABBITMQ_URL
+              value: amqp://doki:changeme@rabbitmq.doki-data.svc.cluster.local:5672
+            - name: MCP_SCANNER_URL
+              value: http://mcp-scanner.doki-mcp.svc.cluster.local:3000
+            - name: MCP_EXECUTION_URL
+              value: http://mcp-execution.doki-mcp.svc.cluster.local:3000
+            - name: MCP_POLICY_URL
+              value: http://mcp-policy.doki-mcp.svc.cluster.local:3000
+            - name: OLLAMA_URL
+              value: http://ollama.ai.svc.cluster.local:11434
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL

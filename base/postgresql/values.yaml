@@ -1,0 +1,47 @@
+auth:
+  postgresPassword: changeme-in-vault
+  database: ai_automation
+  username: app_admin
+
+primary:
+  persistence:
+    size: 10Gi
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits:
+      memory: 1Gi
+      cpu: "1000m"
+  initdb:
+    scripts:
+      01-create-terraform-db.sql: |
+        CREATE DATABASE terraform_states;
+      02-create-schemas.sql: |
+        \c ai_automation
+        CREATE SCHEMA IF NOT EXISTS langgraph;
+        CREATE SCHEMA IF NOT EXISTS auth;
+      03-grant-app-admin.sql: |
+        \c ai_automation
+        ALTER ROLE app_admin CREATEDB;
+        GRANT ALL ON SCHEMA public TO app_admin;
+        GRANT ALL ON SCHEMA langgraph TO app_admin;
+        GRANT ALL ON SCHEMA auth TO app_admin;
+      04-create-app-service.sql: |
+        \c ai_automation
+        CREATE ROLE app_service LOGIN PASSWORD 'CHANGE_ME_APP_SERVICE';
+        GRANT CONNECT ON DATABASE ai_automation TO app_service;
+        GRANT USAGE ON SCHEMA public TO app_service;
+        GRANT USAGE ON SCHEMA langgraph TO app_service;
+        GRANT USAGE ON SCHEMA auth TO app_service;
+        ALTER DEFAULT PRIVILEGES IN SCHEMA public
+          GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_service;
+        ALTER DEFAULT PRIVILEGES IN SCHEMA public
+          GRANT USAGE ON SEQUENCES TO app_service;
+        ALTER DEFAULT PRIVILEGES IN SCHEMA langgraph
+          GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_service;
+        ALTER DEFAULT PRIVILEGES IN SCHEMA langgraph
+          GRANT USAGE ON SEQUENCES TO app_service;
+
+metrics:
+  enabled: true

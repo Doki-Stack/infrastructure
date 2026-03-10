@@ -1,0 +1,17 @@
+extraArgs:
+  - "--proactor_threads=2"
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+  limits:
+    memory: 2Gi
+    cpu: "1000m"
+
+storage:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 6379

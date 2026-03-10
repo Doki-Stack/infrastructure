@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: doki-data-services
+  namespace: doki-system
+spec:
+  generators:
+    - list:
+        elements:
+          - name: postgresql
+            path: base/postgresql
+            namespace: doki-data
+          - name: minio
+            path: base/minio
+            namespace: doki-data
+          - name: qdrant
+            path: base/qdrant
+            namespace: doki-data
+          - name: dragonfly
+            path: base/dragonfly
+            namespace: doki-data
+          - name: rabbitmq
+            path: base/rabbitmq
+            namespace: doki-data
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: doki-system
+      annotations:
+        argocd.argoproj.io/sync-wave: "1"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Doki-Stack/infrastructure.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true

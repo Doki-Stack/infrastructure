@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: doki-platform-services
+  namespace: doki-system
+spec:
+  generators:
+    - list:
+        elements:
+          - name: platform-ui
+            path: base/platform-ui
+            namespace: doki-platform
+          - name: api-server
+            path: base/api-server
+            namespace: doki-platform
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: doki-system
+      annotations:
+        argocd.argoproj.io/sync-wave: "5"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Doki-Stack/infrastructure.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true

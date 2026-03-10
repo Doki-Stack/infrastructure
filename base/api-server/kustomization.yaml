@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: doki-platform
+
+resources:
+  - deployment.yaml
+  - service.yaml
+
+commonLabels:
+  app.kubernetes.io/name: api-server
+  app.kubernetes.io/component: platform
+  app.kubernetes.io/part-of: doki-stack
+  app.kubernetes.io/managed-by: argocd
+  doki.io/org-scope: "true"
+
+images:
+  - name: api-server
+    newName: harbor.doki.local/doki-ce/api-server
+    newTag: latest

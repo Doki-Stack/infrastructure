@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: doki-mcp-services
+  namespace: doki-system
+spec:
+  generators:
+    - list:
+        elements:
+          - name: mcp-scanner
+            path: base/mcp-scanner
+            namespace: doki-mcp
+          - name: mcp-execution
+            path: base/mcp-execution
+            namespace: doki-mcp
+          - name: mcp-policy
+            path: base/mcp-policy
+            namespace: doki-mcp
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: doki-system
+      annotations:
+        argocd.argoproj.io/sync-wave: "3"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Doki-Stack/infrastructure.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true

@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: doki-ee
+
+resources:
+  - deployment.yaml
+  - service.yaml
+
+commonLabels:
+  app.kubernetes.io/name: ee-license-server
+  app.kubernetes.io/component: ee
+  app.kubernetes.io/part-of: doki-stack
+  app.kubernetes.io/managed-by: argocd
+  doki.io/org-scope: "true"
+
+images:
+  - name: ee-license-server
+    newName: harbor.doki.local/doki-ee/ee-license-server
+    newTag: latest
